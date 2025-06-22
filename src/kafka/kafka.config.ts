@@ -1,6 +1,6 @@
 import { KafkaOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { KafkaConfig } from './enums/kafka.enums';
+import { KafkaConfig } from '../enums/kafka.enums';
 
 export function kafkaConfig(): KafkaOptions {
   const configService = new ConfigService();
