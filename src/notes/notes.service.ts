@@ -1,16 +1,24 @@
 import { Annotation, StateGraph } from '@langchain/langgraph';
 import { Injectable, Logger } from '@nestjs/common';
-import { AiProviderFactory } from 'src/providers/ai-provider.factory';
+import {
+  ChatLLMService,
+  EmbeddingsService,
+} from 'src/providers/llms/ai-services.interface';
+import { VectorRepository } from 'src/providers/vectorDB/vectors.repository.interface';
 import { NotesCreatedDto } from 'src/dtos/notes-created.dto';
-import { Models, Providers } from 'src/enums/models.enums';
 import { Nodes } from 'src/enums/nodes.enums';
 import { generateSummaryPrompt } from 'src/prompts/generateSummary.prompt';
 import { z } from 'zod';
+import { PineconeRecord } from '@pinecone-database/pinecone';
 
 @Injectable()
 export class NotesService {
   private readonly logger = new Logger(NotesService.name);
-  constructor(private readonly aiProviderFactory: AiProviderFactory) {}
+  constructor(
+    private readonly chatLLMService: ChatLLMService,
+    private readonly embeddingsService: EmbeddingsService,
+    private readonly vectorRepository: VectorRepository,
+  ) {}
   StateAnnotation = Annotation.Root({
     notes: Annotation<NotesCreatedDto>,
     summary: Annotation<string>,
@@ -20,13 +28,11 @@ export class NotesService {
   zodStructureForSummary = z.object({
     summary: z.string().describe('The summary of the notes'),
   });
+
   vectorize = async (state: typeof this.StateAnnotation.State) => {
     this.logger.log('VECTORIZE >>>>>>>>>>>');
-    const llm = this.aiProviderFactory.getEmbeddingsLLM(
-      Providers.OPENAI,
-      Models.GPT_TEXT_EMBEDDING_3_SMALL,
-    );
-    const embeddings = await llm.embedDocuments([state.summary]);
+    const embeddingsLLM = this.embeddingsService.getInstance();
+    const embeddings = await embeddingsLLM.embedDocuments([state.summary]);
     this.logger.debug('EMBEDDINGS >>>>>>>>>>>');
     this.logger.debug(embeddings);
     return { vectors: embeddings as unknown as number[][] };
@@ -36,9 +42,10 @@ export class NotesService {
     state: typeof this.StateAnnotation.State,
   ): Promise<{ summary: string }> => {
     this.logger.log('GENERATING SUMMARY >>>>>>>>>>>');
-    const llmWithStructuredOutput = this.aiProviderFactory
-      .getLLM(Providers.OPENAI, Models.GPT_O3_MINI)
-      .withStructuredOutput(this.zodStructureForSummary);
+    const chatLLM = this.chatLLMService.getInstance();
+    const llmWithStructuredOutput = chatLLM.withStructuredOutput(
+      this.zodStructureForSummary,
+    );
     const prompt = generateSummaryPrompt();
     const formattedPrompt = await prompt.format({ notes: state.notes.content });
 
@@ -49,9 +56,29 @@ export class NotesService {
     return { summary: response.summary };
   };
 
-  saveToVectorStore = (state: typeof this.StateAnnotation.State) => {
+  saveToVectorStore = async (state: typeof this.StateAnnotation.State) => {
     this.logger.log('SAVING TO VECTOR STORE');
     this.logger.log(`Saving ${state.vectors.length} dimensions.`);
+
+    // Generate a unique ID for this note
+    const noteId = `note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Create vector records for storage
+    const records: PineconeRecord[] = state.vectors.map((vector, index) => ({
+      id: `${noteId}-${index}`,
+      values: vector,
+      metadata: {
+        noteId: noteId,
+        summary: state.summary,
+        content: state.notes.content,
+        createdAt: new Date().toISOString(),
+      },
+    }));
+
+    // Save to vector store using the injected repository
+    await this.vectorRepository.save('notes', records);
+    this.logger.log('Successfully saved vectors to store');
+
     return {};
   };
 

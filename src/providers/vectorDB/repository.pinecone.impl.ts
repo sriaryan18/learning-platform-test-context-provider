@@ -4,10 +4,11 @@ import { Index, Pinecone, PineconeRecord } from '@pinecone-database/pinecone';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class PineconeNotesVectorRepository implements VectorRepository {
+export class PineconeNotesVectorRepository extends VectorRepository {
   private readonly pinecone: Pinecone;
   private readonly index: Index;
   constructor(private readonly configService: ConfigService) {
+    super();
     const apiKey = this.configService.get<string>('PINECONE_API_KEY');
     const host = this.configService.get<string>('PINECONE_HOST');
     const index = this.configService.get<string>('PINECONE_INDEX');
@@ -20,9 +21,11 @@ export class PineconeNotesVectorRepository implements VectorRepository {
   async save(namespace: string, records: PineconeRecord[]): Promise<void> {
     await this.index.namespace(namespace).upsert(records);
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   get(namespace: string, context: string): Promise<PineconeRecord[]> {
     throw new Error('Method not implemented.');
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   delete(namespace: string, context: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
