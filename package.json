@@ -31,6 +31,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@pinecone-database/pinecone": "^6.1.1",
     "builder-pattern": "^2.2.0",
+    "config": "^4.0.0",
     "kafkajs": "^2.2.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

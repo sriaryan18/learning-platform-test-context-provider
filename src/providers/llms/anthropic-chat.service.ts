@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatLLMService } from './ai-services.interface';
+import { EnvKeys, ErrorMessages } from '../../enums/models.enums';
 
 @Injectable()
 export class AnthropicChatService extends ChatLLMService {
@@ -9,24 +10,20 @@ export class AnthropicChatService extends ChatLLMService {
 
   constructor(private readonly configService: ConfigService) {
     super();
-    const apiKey = this.configService.get<string>('ANTHROPIC_API_KEY');
-    const model =
-      this.configService.get<string>('DEFAULT_CHAT_MODEL') ||
-      'claude-3-haiku-20240307';
-
+    const apiKey = this.configService.get<string>(EnvKeys.ANTHROPIC_API_KEY);
+    const model = this.configService.get<string>(EnvKeys.DEFAULT_CHAT_MODEL);
     if (!apiKey) {
-      throw new Error('ANTHROPIC_API_KEY is not set');
+      throw new Error(
+        `${ErrorMessages.API_KEY_NOT_SET}: ${EnvKeys.ANTHROPIC_API_KEY}`,
+      );
     }
 
     this.chatAnthropic = new ChatAnthropic({
       model,
       apiKey,
-      temperature: Number(
-        this.configService.get<number>('LLM_TEMPERATURE') || 0.7,
-      ),
-      maxTokens: Number(
-        this.configService.get<number>('LLM_MAX_TOKENS') || 1000,
-      ),
+      temperature:
+        this.configService.get<number>(EnvKeys.LLM_TEMPERATURE) || 0.7,
+      maxTokens: this.configService.get<number>(EnvKeys.LLM_MAX_TOKENS) || 1000,
     });
   }
 

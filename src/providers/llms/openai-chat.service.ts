@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatLLMService } from './ai-services.interface';
+import { EnvKeys, Models, ErrorMessages } from '../../enums/models.enums';
 
 @Injectable()
 export class OpenAIChatService extends ChatLLMService {
@@ -9,23 +10,23 @@ export class OpenAIChatService extends ChatLLMService {
 
   constructor(private readonly configService: ConfigService) {
     super();
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const apiKey = this.configService.get<string>(EnvKeys.OPENAI_API_KEY);
     const model =
-      this.configService.get<string>('DEFAULT_CHAT_MODEL') || 'gpt-4o-mini';
+      this.configService.get<string>(EnvKeys.DEFAULT_CHAT_MODEL) ||
+      Models.GPT_4O_MINI;
 
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY is not set');
+      throw new Error(
+        `${ErrorMessages.API_KEY_NOT_SET}: ${EnvKeys.OPENAI_API_KEY}`,
+      );
     }
 
     this.chatOpenAI = new ChatOpenAI({
       model,
       apiKey,
-      temperature: Number(
-        this.configService.get<number>('LLM_TEMPERATURE') || 0.7,
-      ),
-      maxTokens: Number(
-        this.configService.get<number>('LLM_MAX_TOKENS') || 1000,
-      ),
+      temperature:
+        this.configService.get<number>(EnvKeys.LLM_TEMPERATURE) || 0.7,
+      maxTokens: this.configService.get<number>(EnvKeys.LLM_MAX_TOKENS) || 1000,
     });
   }
 

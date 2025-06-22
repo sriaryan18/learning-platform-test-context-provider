@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { VectorRepository } from './vectors.repository.interface';
 import { Index, Pinecone, PineconeRecord } from '@pinecone-database/pinecone';
 import { ConfigService } from '@nestjs/config';
+import { EnvKeys, ErrorMessages } from '../../enums/models.enums';
 
 @Injectable()
 export class PineconeNotesVectorRepository extends VectorRepository {
@@ -9,11 +10,12 @@ export class PineconeNotesVectorRepository extends VectorRepository {
   private readonly index: Index;
   constructor(private readonly configService: ConfigService) {
     super();
-    const apiKey = this.configService.get<string>('PINECONE_API_KEY');
-    const host = this.configService.get<string>('PINECONE_HOST');
-    const index = this.configService.get<string>('PINECONE_INDEX');
+    const apiKey = this.configService.get<string>(EnvKeys.PINECONE_API_KEY);
+    const host = this.configService.get<string>(EnvKeys.PINECONE_HOST);
+    const index = this.configService.get<string>(EnvKeys.PINECONE_INDEX);
+
     if (!apiKey || !host || !index) {
-      throw new Error('PINECONE_API_KEY is not set');
+      throw new Error(`${ErrorMessages.API_KEY_NOT_SET}: PINECONE credentials`);
     }
     this.pinecone = new Pinecone({ apiKey });
     this.index = this.pinecone.Index(index);

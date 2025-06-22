@@ -9,27 +9,35 @@ import {
 import { OpenAIChatService } from './llms/openai-chat.service';
 import { AnthropicChatService } from './llms/anthropic-chat.service';
 import { OpenAIEmbeddingsService } from './llms/openai-embeddings.service';
+import {
+  AIProviders,
+  VectorProviders,
+  EnvKeys,
+  ErrorMessages,
+} from '../enums/models.enums';
 
 @Module({
   providers: [
     {
       provide: VectorRepository,
       useFactory: (configService: ConfigService) => {
-        const vectorProvider = configService.get<string>(
-          'VECTOR_PROVIDER',
-          'pinecone',
+        const vectorProvider = configService.get<VectorProviders>(
+          EnvKeys.VECTOR_PROVIDER,
+          VectorProviders.PINECONE,
         );
 
-        switch (vectorProvider.toLowerCase()) {
-          case 'pinecone':
+        switch (vectorProvider) {
+          case VectorProviders.PINECONE:
             return new PineconeNotesVectorRepository(configService);
           // Add more vector providers here as needed
-          // case 'weaviate':
+          // case VectorProviders.WEAVIATE:
           //   return new WeaviateVectorRepository(configService);
-          // case 'chroma':
+          // case VectorProviders.CHROMA:
           //   return new ChromaVectorRepository(configService);
           default:
-            throw new Error(`Unsupported vector provider: ${vectorProvider}`);
+            throw new Error(
+              `${ErrorMessages.UNSUPPORTED_VECTOR_PROVIDER}: ${vectorProvider}`,
+            );
         }
       },
       inject: [ConfigService],
@@ -37,21 +45,23 @@ import { OpenAIEmbeddingsService } from './llms/openai-embeddings.service';
     {
       provide: ChatLLMService,
       useFactory: (configService: ConfigService) => {
-        const chatProvider = configService.get<string>(
-          'CHAT_PROVIDER',
-          'openai',
+        const chatProvider = configService.get<AIProviders>(
+          EnvKeys.CHAT_PROVIDER,
+          AIProviders.OPENAI,
         );
 
-        switch (chatProvider.toLowerCase()) {
-          case 'openai':
+        switch (chatProvider) {
+          case AIProviders.OPENAI:
             return new OpenAIChatService(configService);
-          case 'anthropic':
+          case AIProviders.ANTHROPIC:
             return new AnthropicChatService(configService);
           // Add more chat providers here as needed
-          // case 'ollama':
+          // case AIProviders.OLLAMA:
           //   return new OllamaChatService(configService);
           default:
-            throw new Error(`Unsupported chat provider: ${chatProvider}`);
+            throw new Error(
+              `${ErrorMessages.UNSUPPORTED_CHAT_PROVIDER}: ${chatProvider}`,
+            );
         }
       },
       inject: [ConfigService],
@@ -59,20 +69,20 @@ import { OpenAIEmbeddingsService } from './llms/openai-embeddings.service';
     {
       provide: EmbeddingsService,
       useFactory: (configService: ConfigService) => {
-        const embeddingsProvider = configService.get<string>(
-          'EMBEDDINGS_PROVIDER',
-          'openai',
+        const embeddingsProvider = configService.get<AIProviders>(
+          EnvKeys.EMBEDDINGS_PROVIDER,
+          AIProviders.OPENAI,
         );
 
-        switch (embeddingsProvider.toLowerCase()) {
-          case 'openai':
+        switch (embeddingsProvider) {
+          case AIProviders.OPENAI:
             return new OpenAIEmbeddingsService(configService);
           // Add more embeddings providers here as needed
-          // case 'huggingface':
+          // case AIProviders.HUGGINGFACE:
           //   return new HuggingFaceEmbeddingsService(configService);
           default:
             throw new Error(
-              `Unsupported embeddings provider: ${embeddingsProvider}`,
+              `${ErrorMessages.UNSUPPORTED_EMBEDDINGS_PROVIDER}: ${embeddingsProvider}`,
             );
         }
       },
