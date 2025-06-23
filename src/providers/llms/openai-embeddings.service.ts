@@ -24,6 +24,9 @@ export class OpenAIEmbeddingsService extends EmbeddingsService {
     this.openAIEmbeddings = new OpenAIEmbeddings({
       model,
       apiKey,
+      dimensions: Number(
+        this.configService.get<number>(EnvKeys.EMBEDDINGS_DIMENSIONS) || 256,
+      ),
     });
   }
 

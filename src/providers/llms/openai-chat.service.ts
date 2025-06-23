@@ -25,8 +25,9 @@ export class OpenAIChatService extends ChatLLMService {
       model,
       apiKey,
       temperature:
-        this.configService.get<number>(EnvKeys.LLM_TEMPERATURE) || 0.7,
-      maxTokens: this.configService.get<number>(EnvKeys.LLM_MAX_TOKENS) || 1000,
+        Number(this.configService.get<number>(EnvKeys.LLM_TEMPERATURE)) || 0.7,
+      maxTokens:
+        Number(this.configService.get<number>(EnvKeys.LLM_MAX_TOKENS)) || 1000,
     });
   }
 

@@ -8,6 +8,5 @@ export abstract class ChatLLMService {
 
 // Abstract class for Embeddings services
 export abstract class EmbeddingsService {
-  
   abstract getInstance(): OpenAIEmbeddings;
 }

@@ -18,11 +18,16 @@ export function kafkaConfig(): KafkaOptions {
           KafkaConfig.KAFKA_CONSUMER_GROUP_ID,
         ) as string,
       },
+
       subscribe: {
-        fromBeginning: true,
+        fromBeginning: false,
       },
       run: {
         partitionsConsumedConcurrently: 1,
+        autoCommit: true,
+        autoCommitInterval: 1000,
+        eachBatchAutoResolve: true,
+        autoCommitThreshold: 10,
       },
     },
   };

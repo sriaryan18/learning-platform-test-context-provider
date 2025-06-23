@@ -10,6 +10,7 @@ import { Nodes } from 'src/enums/nodes.enums';
 import { generateSummaryPrompt } from 'src/prompts/generateSummary.prompt';
 import { z } from 'zod';
 import { PineconeRecord } from '@pinecone-database/pinecone';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class NotesService {
@@ -34,7 +35,6 @@ export class NotesService {
     const embeddingsLLM = this.embeddingsService.getInstance();
     const embeddings = await embeddingsLLM.embedDocuments([state.summary]);
     this.logger.debug('EMBEDDINGS >>>>>>>>>>>');
-    this.logger.debug(embeddings);
     return { vectors: embeddings as unknown as number[][] };
   };
 
@@ -64,8 +64,8 @@ export class NotesService {
     const noteId = `note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
     // Create vector records for storage
-    const records: PineconeRecord[] = state.vectors.map((vector, index) => ({
-      id: `${noteId}-${index}`,
+    const records: PineconeRecord[] = state.vectors.map((vector) => ({
+      id: `${noteId}-${uuidv4()}`,
       values: vector,
       metadata: {
         noteId: noteId,
@@ -76,7 +76,7 @@ export class NotesService {
     }));
 
     // Save to vector store using the injected repository
-    await this.vectorRepository.save('notes', records);
+    await this.vectorRepository.save('__default__', records);
     this.logger.log('Successfully saved vectors to store');
 
     return {};
@@ -97,9 +97,7 @@ export class NotesService {
     .compile();
 
   async handleNotesCreated(note: NotesCreatedDto) {
-    const result = await this.workflow.invoke({ notes: note });
-    this.logger.debug('RESULT >>>>>>>>>>>');
-    this.logger.debug(result);
+    await this.workflow.invoke({ notes: note });
     // PUSH TO KAFKA WITH STATUS
   }
 }
