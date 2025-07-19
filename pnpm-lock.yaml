@@ -14,6 +14,9 @@ importers:
       '@langchain/core':
         specifier: ^0.3.61
         version: 0.3.61(openai@5.6.0(zod@3.25.67))
+      '@langchain/google-genai':
+        specifier: ^0.2.15
+        version: 0.2.15(@langchain/core@0.3.61(openai@5.6.0(zod@3.25.67)))
       '@langchain/langgraph':
         specifier: ^0.3.4
         version: 0.3.4(@langchain/core@0.3.61(openai@5.6.0(zod@3.25.67)))(zod-to-json-schema@3.24.5(zod@3.25.67))
@@ -391,6 +394,10 @@ packages:
     resolution: {integrity: sha512-4SaFZCNfJqvk/kenHpI8xvN42DMaoycy4PzKc5otHxRswww1kAt82OlBuwRVLofCACCTZEcla2Ydxv8scMXaTg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
+    engines: {node: '>=18.0.0'}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -660,6 +667,12 @@ packages:
   '@langchain/core@0.3.61':
     resolution: {integrity: sha512-4O7fw5SXNSE+uBnathLQrhm3t+7dZGagt/5kt37A+pXw0AkudxEBvveg73sSnpBd9SIz3/Vc7F4k8rCKXGbEDA==}
     engines: {node: '>=18'}
+
+  '@langchain/google-genai@0.2.15':
+    resolution: {integrity: sha512-fAD3xjzd5TxWQCKlttNeEc+b5tUX43hBqKH3rk3g+wbl1ToLqe3ocWawKRmGotEuI5jhDVmoHjDxoNMifFDgmg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.3.58 <0.4.0'
 
   '@langchain/langgraph-checkpoint@0.0.18':
     resolution: {integrity: sha512-IS7zJj36VgY+4pf8ZjsVuUWef7oTwt1y9ylvwu0aLuOn1d0fg05Om9DLm3v2GZ2Df6bhLV1kfWAM0IAl9O5rQQ==}
@@ -3905,6 +3918,8 @@ snapshots:
       '@eslint/core': 0.15.0
       levn: 0.4.1
 
+  '@google/generative-ai@0.24.1': {}
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -4285,6 +4300,12 @@ snapshots:
       zod-to-json-schema: 3.24.5(zod@3.25.67)
     transitivePeerDependencies:
       - openai
+
+  '@langchain/google-genai@0.2.15(@langchain/core@0.3.61(openai@5.6.0(zod@3.25.67)))':
+    dependencies:
+      '@google/generative-ai': 0.24.1
+      '@langchain/core': 0.3.61(openai@5.6.0(zod@3.25.67))
+      uuid: 11.1.0
 
   '@langchain/langgraph-checkpoint@0.0.18(@langchain/core@0.3.61(openai@5.6.0(zod@3.25.67)))':
     dependencies:

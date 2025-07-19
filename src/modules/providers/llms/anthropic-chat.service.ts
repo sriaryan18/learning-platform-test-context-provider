@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatLLMService } from './ai-services.interface';
-import { EnvKeys, ErrorMessages } from '../../enums/models.enums';
+import { EnvKeys, ErrorMessages } from '../../../enums/models.enums';
 
 @Injectable()
 export class AnthropicChatService extends ChatLLMService {

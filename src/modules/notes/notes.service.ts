@@ -3,8 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   ChatLLMService,
   EmbeddingsService,
-} from 'src/providers/llms/ai-services.interface';
-import { VectorRepository } from 'src/providers/vectorDB/vectors.repository.interface';
+} from 'src/modules/providers/llms/ai-services.interface';
+import { VectorRepository } from 'src/modules/providers/vectorDB/vectors.repository.interface';
 import { NotesCreatedDto } from 'src/dtos/notes-created.dto';
 import { Nodes } from 'src/enums/nodes.enums';
 import { generateSummaryPrompt } from 'src/prompts/generateSummary.prompt';
@@ -85,7 +85,6 @@ export class NotesService {
   /**
    * START -> GENERATE SUMMARY -> VECTORIZE -> SAVE TO VECTOR STORE -> END
    */
-
   workflow = new StateGraph(this.StateAnnotation)
     .addNode(Nodes.GenerateSummary, this.generateSummary)
     .addNode(Nodes.Vectorize, this.vectorize)
@@ -98,6 +97,5 @@ export class NotesService {
 
   async handleNotesCreated(note: NotesCreatedDto) {
     await this.workflow.invoke({ notes: note });
-    // PUSH TO KAFKA WITH STATUS
   }
 }

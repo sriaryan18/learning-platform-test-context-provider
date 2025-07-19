@@ -10,6 +10,7 @@ export enum AIProviders {
   OPENAI = 'openai',
   OLLAMA = 'ollama',
   ANTHROPIC = 'anthropic',
+  GEMINI = 'gemini',
 }
 
 export enum VectorProviders {
@@ -38,6 +39,7 @@ export enum EnvKeys {
   LLM_TEMPERATURE = 'LLM_TEMPERATURE',
   LLM_MAX_TOKENS = 'LLM_MAX_TOKENS',
   EMBEDDINGS_DIMENSIONS = 'EMBEDDINGS_DIMENSIONS',
+  GEMINI_API_KEY = 'GEMINI_API_KEY',
 }
 
 // Error Messages

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { VectorRepository } from 'src/providers/vectorDB/vectors.repository.interface';
+import { VectorRepository } from 'src/modules/providers/vectorDB/vectors.repository.interface';
 import { PineconeRecord } from '@pinecone-database/pinecone';
 
 @Injectable()

@@ -14,7 +14,8 @@ import {
   VectorProviders,
   EnvKeys,
   ErrorMessages,
-} from '../enums/models.enums';
+} from '../../enums/models.enums';
+import { GeminiChatService } from './llms/gemini-chat-service';
 
 @Module({
   providers: [
@@ -55,6 +56,8 @@ import {
             return new OpenAIChatService(configService);
           case AIProviders.ANTHROPIC:
             return new AnthropicChatService(configService);
+          case AIProviders.GEMINI:
+            return new GeminiChatService(configService);
           // Add more chat providers here as needed
           // case AIProviders.OLLAMA:
           //   return new OllamaChatService(configService);

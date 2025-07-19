@@ -22,6 +22,7 @@
   "dependencies": {
     "@langchain/anthropic": "^0.3.23",
     "@langchain/core": "^0.3.61",
+    "@langchain/google-genai": "^0.2.15",
     "@langchain/langgraph": "^0.3.4",
     "@langchain/openai": "^0.5.15",
     "@nestjs/common": "^11.0.1",

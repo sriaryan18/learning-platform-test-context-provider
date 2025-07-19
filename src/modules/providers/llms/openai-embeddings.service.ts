@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { EmbeddingsService } from './ai-services.interface';
-import { EnvKeys, Models, ErrorMessages } from '../../enums/models.enums';
+import { EnvKeys, Models, ErrorMessages } from '../../../enums/models.enums';
 
 @Injectable()
 export class OpenAIEmbeddingsService extends EmbeddingsService {

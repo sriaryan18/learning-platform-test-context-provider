@@ -1,9 +1,15 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
-import { KafkaTopics } from '../../enums/kafka.enums';
-import { NotesCreatedDto } from '../../dtos/notes-created.dto';
-import { NotesService } from 'src/notes/notes.service';
+import { KafkaTopics } from '../../../enums/kafka.enums';
+import { NotesCreatedDto } from '../../../dtos/notes-created.dto';
+import { NotesService } from 'src/modules/notes/notes.service';
 import { Builder } from 'builder-pattern';
+
+interface NotesData {
+  content: string;
+  lectureId: string;
+  instructorId: string;
+}
 
 @Controller()
 export class NotesCreatedConsumer {
@@ -14,9 +20,9 @@ export class NotesCreatedConsumer {
   }
 
   @EventPattern(KafkaTopics.NOTES_CREATED)
-  handleNotesCreated(@Payload() data: string) {
+  handleNotesCreated(@Payload() data: NotesData) {
     this.logger.log('Received message from Kafka', data);
-    const notesCreatedDto = Builder(NotesCreatedDto).content(data).build();
-    this.notesService.handleNotesCreated(notesCreatedDto);
+
+    this.notesService.handleNotesCreated(data);
   }
 }

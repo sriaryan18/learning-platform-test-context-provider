@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { VectorRepository } from './vectors.repository.interface';
 import { Index, Pinecone, PineconeRecord } from '@pinecone-database/pinecone';
 import { ConfigService } from '@nestjs/config';
-import { EnvKeys, ErrorMessages } from '../../enums/models.enums';
+import { EnvKeys, ErrorMessages } from '../../../enums/models.enums';
 
 @Injectable()
 export class PineconeNotesVectorRepository extends VectorRepository {
